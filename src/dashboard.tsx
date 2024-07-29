@@ -355,7 +355,7 @@ function TaskDialog({ task, mode, trigger, session }: TaskProps) {
     defaultValues: {
       title: task.title,
       description: task.description,
-      reminder_time: task.reminder_time,
+      reminder_time: new Date(task.reminder_time),
       completed: task.completed,
     },
   });
@@ -375,6 +375,8 @@ function TaskDialog({ task, mode, trigger, session }: TaskProps) {
   }, [error, toast]);
 
   const createEvent = async (t: z.infer<typeof formSchema>) => {
+    const end = new Date(t.reminder_time);
+    end.setHours(end.getHours() + 1);
     const event = await calendar.createEvent({
       summary: t.title,
       description: t.description,
@@ -383,7 +385,8 @@ function TaskDialog({ task, mode, trigger, session }: TaskProps) {
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       },
       end: {
-        dateTime: t.reminder_time.toISOString(),
+        // add 1 hour to the start time
+        dateTime: end.toISOString(),
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       },
     });
@@ -391,6 +394,8 @@ function TaskDialog({ task, mode, trigger, session }: TaskProps) {
   };
 
   const updateEvent = async (t: z.infer<typeof formSchema>) => {
+    const end = new Date(t.reminder_time);
+    end.setHours(end.getHours() + 1);
     const event = await calendar.updateEvent(
       {
         summary: t.title,
@@ -400,7 +405,7 @@ function TaskDialog({ task, mode, trigger, session }: TaskProps) {
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
         end: {
-          dateTime: t.reminder_time.toISOString(),
+          dateTime: end,
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
       },
