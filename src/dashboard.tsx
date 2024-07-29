@@ -405,7 +405,7 @@ function TaskDialog({ task, mode, trigger, session }: TaskProps) {
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
         end: {
-          dateTime: end,
+          dateTime: end.toISOString(),
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
       },
