@@ -198,7 +198,7 @@ export function Dashboard({ session }: Props) {
       <div className="flex flex-col flex-1 px-4">
         <div className="flex flex-row gap-2 flex-wrap">
           {tasks.map((task) => (
-            <div key={task.id} className="w-72">
+            <div key={task.id} className="w-72 relative">
               <Card className={`h-60 ${task.completed ? "bg-gray-300" : ""} `}>
                 <CardHeader>
                   <CardTitle className={task.completed ? "line-through" : ""}>
@@ -209,7 +209,15 @@ export function Dashboard({ session }: Props) {
                   <CardDescription
                     className={task.completed ? "line-through" : ""}
                   >
-                    {task.description}
+                    <span className="mt-2 mb-4 block text-sm">
+                      {task.description}
+                    </span>
+                    <span>
+                      Due:{" "}
+                      {new Date(task.reminder_time).toLocaleString("en-US", {
+                        timeStyle: "medium",
+                      })}
+                    </span>
                   </CardDescription>
                 </CardContent>
                 <CardFooter
