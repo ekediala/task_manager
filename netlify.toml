@@ -1,0 +1,32 @@
+[build]
+command = "npm run build"
+publish = "build/client"
+
+[dev]
+command = "npm run dev"
+framework = "vite"
+
+# Set immutable caching for static files, because they have fingerprinted filenames
+
+[[headers]]
+for = "/build/*"
+
+[headers.values]
+
+"Cache-Control" = "public, max-age=31560000, immutable"
+
+[context.main]
+  [context.main.environment]
+    VITE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhvc3Z5bXFvb3dodXRodnlnY3V5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjE4MTI1NDksImV4cCI6MjAzNzM4ODU0OX0.syAPYmJ95P5N4m6NRZ8PSphiOgeaMU3nBHaPm_1a7vY'
+    VITE_PROJECT_URL = 'https://hosvymqoowhuthvygcuy.supabase.co'
+    VITE_REDIRECT_URL = 'http://localhost:3000'
+    VITE_CALENDAR_CLIENT_ID = '1019002727964-aijck0tejsem51hgl3b46pj3mbo2tvsi.apps.googleusercontent.com'
+    VITE_CALENDAR_API_KEY = 'AIzaSyA7ePKfjAu94vgg_S2VtcnX8URLcRks_B8'
+
+[context.dev]
+  [context.dev.environment]
+    VITE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhvc3Z5bXFvb3dodXRodnlnY3V5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjE4MTI1NDksImV4cCI6MjAzNzM4ODU0OX0.syAPYmJ95P5N4m6NRZ8PSphiOgeaMU3nBHaPm_1a7vY'
+    VITE_PROJECT_URL = 'https://hosvymqoowhuthvygcuy.supabase.co'
+    VITE_REDIRECT_URL = 'http://localhost:3000'
+    VITE_CALENDAR_CLIENT_ID = '1019002727964-aijck0tejsem51hgl3b46pj3mbo2tvsi.apps.googleusercontent.com'
+    VITE_CALENDAR_API_KEY = 'AIzaSyA7ePKfjAu94vgg_S2VtcnX8URLcRks_B8'
