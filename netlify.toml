@@ -1,5 +1,5 @@
 [build]
-command = "npm run build"
+command = "npm run build && echo $VITE_REDIRECT_URL"
 publish = "dist"
 
 [dev]

@@ -1,21 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
-import ApiCalendar from "react-google-calendar-api";
 
 export const supabase = createClient(
   import.meta.env.VITE_PROJECT_URL!,
   import.meta.env.VITE_ANON_KEY!,
 );
-
-const calendarConfig = {
-  clientId: import.meta.env.VITE_CALENDAR_CLIENT_ID!,
-  apiKey: import.meta.env.VITE_CALENDAR_API_KEY!,
-  scope: "https://www.googleapis.com/auth/calendar",
-  discoveryDocs: [
-    "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
-  ],
-};
-
-export const calendar = new ApiCalendar(calendarConfig);
 
 type Event = {
   summary: string;
