@@ -11,6 +11,14 @@ export default function App() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
+      // If the user is logged in with Google, but doesn't have a provider_token, they need to reauthenticate
+      // This is because the Google provider_token is required to access the Google Calendar API
+      if (
+        session?.user.app_metadata.provider === "google" &&
+        !session?.provider_token
+      ) {
+        return;
+      }
       setSession(session);
     });
 
