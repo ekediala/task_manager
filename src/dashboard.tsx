@@ -90,25 +90,25 @@ export function Dashboard({ session }: Props) {
   const endOfDay = `${currentDate}T23:59:59+00:00`;
 
   const getTasks = useCallback(
-    async (start: string, end: string) => {
+    async (start: string, end: string, userId: string) => {
       const { data, error } = await supabase
         .from(TASK_TABLE_NAME)
         .select("*")
         .gte("reminder_time::date", start)
         .lte("reminder_time::date", end)
-        .eq("user_id", user?.id)
+        .eq("user_id", userId)
         .order("reminder_time", { ascending: true });
       if (error) {
         return setError(error);
       }
       return setTasks(data);
     },
-    [user],
+    [],
   );
 
   useEffect(() => {
-    getTasks(startOfDay, endOfDay);
-  }, [getTasks, startOfDay, endOfDay]);
+    getTasks(startOfDay, endOfDay, user.id);
+  }, [getTasks, startOfDay, endOfDay, user]);
 
   useEffect(() => {
     if (error) {
@@ -129,10 +129,10 @@ export function Dashboard({ session }: Props) {
           event: "*",
           schema: "public",
         },
-        () => getTasks(startOfDay, endOfDay),
+        () => getTasks(startOfDay, endOfDay, user.id),
       )
       .subscribe();
-  });
+  }, [getTasks, startOfDay, endOfDay, user]);
 
   const deleteTask = async (task: Task) => {
     const calendar = new Calendar(session.provider_token || "");
@@ -203,9 +203,7 @@ export function Dashboard({ session }: Props) {
         <div className="flex flex-row gap-2 flex-wrap">
           {tasks.map((task) => (
             <div key={task.id} className="w-full sm:w-72 relative">
-              <Card
-                className={`h-72 sm:h-60 ${task.completed ? "bg-gray-300" : ""} `}
-              >
+              <Card className={`h-72 ${task.completed ? "bg-gray-300" : ""} `}>
                 <CardHeader>
                   <CardTitle className={task.completed ? "line-through" : ""}>
                     {task.title}
@@ -227,7 +225,7 @@ export function Dashboard({ session }: Props) {
                   </CardDescription>
                 </CardContent>
                 <CardFooter
-                  className={`gap-1 ${task.completed ? "hidden" : "flex-row"}`}
+                  className={`gap-1 absolute bottom-0 ${task.completed ? "hidden" : "flex-row"}`}
                 >
                   <TaskDialog
                     mode={"edit"}
@@ -269,8 +267,8 @@ export function Dashboard({ session }: Props) {
               </Card>
             </div>
           ))}
-          <div className="w-full sm:w-72">
-            <Card className="h-72 sm:h-60">
+          <div className="w-full sm:w-72 relative">
+            <Card className="h-72">
               <CardHeader>
                 <CardTitle>Create Task</CardTitle>
               </CardHeader>
@@ -280,7 +278,7 @@ export function Dashboard({ session }: Props) {
                   tomorrow.Stick to about 3-4 tasks a day.
                 </CardDescription>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="absolute bottom-0">
                 <TaskDialog
                   mode={"create"}
                   session={session}
