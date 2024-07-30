@@ -17,6 +17,7 @@ export default function App() {
         session?.user.app_metadata.provider === "google" &&
         !session?.provider_token
       ) {
+        supabase.auth.signOut();
         return;
       }
       setSession(session);

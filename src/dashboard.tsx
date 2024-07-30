@@ -89,18 +89,22 @@ export function Dashboard({ session }: Props) {
   const startOfDay = `${currentDate}T00:00:00+00:00`;
   const endOfDay = `${currentDate}T23:59:59+00:00`;
 
-  const getTasks = useCallback(async (start: string, end: string) => {
-    const { data, error } = await supabase
-      .from(TASK_TABLE_NAME)
-      .select("*")
-      .gte("reminder_time::date", start)
-      .lte("reminder_time::date", end)
-      .order("reminder_time", { ascending: true });
-    if (error) {
-      return setError(error);
-    }
-    return setTasks(data);
-  }, []);
+  const getTasks = useCallback(
+    async (start: string, end: string) => {
+      const { data, error } = await supabase
+        .from(TASK_TABLE_NAME)
+        .select("*")
+        .gte("reminder_time::date", start)
+        .lte("reminder_time::date", end)
+        .eq("user_id", user?.id)
+        .order("reminder_time", { ascending: true });
+      if (error) {
+        return setError(error);
+      }
+      return setTasks(data);
+    },
+    [user],
+  );
 
   useEffect(() => {
     getTasks(startOfDay, endOfDay);
@@ -165,20 +169,20 @@ export function Dashboard({ session }: Props) {
   };
 
   return (
-    <div className="flex flex-col w-screen bg-gray-800 h-screen">
+    <div className="flex flex-col px-4 pb-6 bg-gray-800 h-full sm:h-screen w-screen">
       <Toaster />
-      <div className="flex justify-between items-center p-4 text-white">
-        <h1 className="text-2xl">
-          Task board for{" "}
+      <div className="flex flex-col items-center sm:!flex-row sm:justify-between p-4 text-white">
+        <h1 className="text-2xl text-center">
+          Task board for
           <input
             type="date"
             value={date.toISOString().split("T")[0]}
             onChange={(e) => setDate(new Date(e.target.value))}
-            className="bg-gray-800"
+            className="bg-gray-800 text-center my-1 sm:my-0"
           />
         </h1>
-        <div className="flex flex-col sm:flex-row md:justify-end">
-          <span className="m-2">{user?.email}</span>
+        <div className="flex flex-col sm:flex-row sm:justify-end">
+          <span className="">{user?.email}</span>
           <ConfirmDialog
             title="Sign Out"
             description="Are you sure you want to sign out?"
@@ -195,11 +199,13 @@ export function Dashboard({ session }: Props) {
           />
         </div>
       </div>
-      <div className="flex flex-col flex-1 px-4">
+      <div className="flex flex-col flex-1 px-2 sm:px-1">
         <div className="flex flex-row gap-2 flex-wrap">
           {tasks.map((task) => (
-            <div key={task.id} className="w-72 relative">
-              <Card className={`h-60 ${task.completed ? "bg-gray-300" : ""} `}>
+            <div key={task.id} className="w-full sm:w-72 relative">
+              <Card
+                className={`h-72 sm:h-60 ${task.completed ? "bg-gray-300" : ""} `}
+              >
                 <CardHeader>
                   <CardTitle className={task.completed ? "line-through" : ""}>
                     {task.title}
@@ -263,8 +269,8 @@ export function Dashboard({ session }: Props) {
               </Card>
             </div>
           ))}
-          <div className="w-72">
-            <Card className="h-60">
+          <div className="w-full sm:w-72">
+            <Card className="h-72 sm:h-60">
               <CardHeader>
                 <CardTitle>Create Task</CardTitle>
               </CardHeader>
@@ -427,6 +433,7 @@ function TaskDialog({ task, mode, trigger, session }: TaskProps) {
           title: "Task created",
           description: "Task has been created",
         });
+        form.reset();
       }
     } catch (error: any) {
       console.error(error);
@@ -454,6 +461,7 @@ function TaskDialog({ task, mode, trigger, session }: TaskProps) {
           title: "Task updated",
           description: "Task has been updated",
         });
+        form.reset();
       }
     } catch (error: any) {
       toast({
