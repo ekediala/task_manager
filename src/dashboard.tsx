@@ -44,6 +44,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { Input } from "@/components/ui/input";
 import { Textarea } from "./components/ui/textarea";
 import DateTimePicker from "react-datetime-picker";
@@ -204,10 +213,21 @@ export function Dashboard({ session }: Props) {
           {tasks.map((task) => (
             <div key={task.id} className="w-full sm:w-72 relative">
               <Card className={`h-72 ${task.completed ? "bg-gray-300" : ""} `}>
-                <CardHeader>
-                  <CardTitle className={task.completed ? "line-through" : ""}>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle
+                    className={`${task.completed ? "line-through" : ""} basis-4/5`}
+                  >
                     {task.title}
                   </CardTitle>
+                  <TaskOptions
+                    task={task}
+                    session={session}
+                    trigger={
+                      <DropdownMenuTrigger className="bg-white w-fit font-bold text-lg">
+                        ...
+                      </DropdownMenuTrigger>
+                    }
+                  />
                 </CardHeader>
                 <CardContent>
                   <CardDescription
@@ -589,5 +609,35 @@ function TaskDialog({ task, mode, trigger, session }: TaskProps) {
         </DialogHeader>
       </DialogContent>
     </Dialog>
+  );
+}
+
+type TaskOptionsProps = {
+  task: Task;
+  trigger: React.ReactNode;
+  session: Session;
+};
+
+function TaskOptions({ trigger, task, session }: TaskOptionsProps) {
+  return (
+    <DropdownMenu>
+      {trigger}
+      <DropdownMenuContent>
+        <DropdownMenuLabel>Options</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <TaskDialog
+          mode={"create"}
+          session={session}
+          task={task}
+          trigger={
+            <DialogTrigger asChild>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                Duplicate
+              </DropdownMenuItem>
+            </DialogTrigger>
+          }
+        />
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
