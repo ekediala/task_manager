@@ -181,6 +181,13 @@ export function Dashboard({ session }: Props) {
       });
   };
 
+  function linkify(text: string) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function (url) {
+      return `<a href="${url}"class="underline" target="_blank">${url}</a>`;
+    });
+  }
+
   return (
     <div className="flex flex-col px-4 pb-6 bg-gray-800 h-screen sm:h-screen w-screen">
       <Toaster />
@@ -217,7 +224,7 @@ export function Dashboard({ session }: Props) {
           {tasks.map((task) => (
             <div key={task.id} className="w-full sm:w-72 relative">
               <Card className={`h-72 ${task.completed ? "bg-gray-300" : ""} `}>
-                <CardHeader className="flex flex-row justify-between">
+                <CardHeader className="flex flex-row justify-between items-center">
                   <CardTitle
                     className={`${task.completed ? "line-through" : ""} basis-4/5`}
                   >
@@ -227,7 +234,7 @@ export function Dashboard({ session }: Props) {
                     task={task}
                     session={session}
                     trigger={
-                      <DropdownMenuTrigger className="bg-white w-fit font-bold text-lg">
+                      <DropdownMenuTrigger className="bg-white flex !-mt-4 items-center justify-center w-fit font-bold text-lg">
                         ...
                       </DropdownMenuTrigger>
                     }
@@ -235,11 +242,17 @@ export function Dashboard({ session }: Props) {
                 </CardHeader>
                 <CardContent>
                   <CardDescription
-                    className={task.completed ? "line-through" : ""}
+                    title={task.description}
+                    className={`break-words line-clamp-3 mb-2 ${task.completed ? "line-through" : ""}`}
                   >
-                    <span className="mt-2 mb-4 block text-sm">
-                      {task.description}
-                    </span>
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: linkify(task.description),
+                      }}
+                      className="mt-2 block text-sm"
+                    ></span>
+                  </CardDescription>
+                  <CardDescription>
                     <span>
                       Due:{" "}
                       {new Date(task.reminder_time).toLocaleString("en-US", {
@@ -249,7 +262,7 @@ export function Dashboard({ session }: Props) {
                   </CardDescription>
                 </CardContent>
                 <CardFooter
-                  className={`gap-1 absolute bottom-0 ${task.completed ? "hidden" : "flex-row"}`}
+                  className={`gap-1 bottom-0 absolute ${task.completed ? "hidden" : "flex-row"}`}
                 >
                   <TaskDialog
                     mode={"edit"}
@@ -545,6 +558,7 @@ function TaskDialog({ task, mode, trigger, session }: TaskProps) {
                       <FormLabel>Description</FormLabel>
                       <FormControl>
                         <Textarea
+                          maxLength={100}
                           placeholder="Read lord of the rings"
                           {...field}
                         />
