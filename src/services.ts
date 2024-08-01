@@ -228,8 +228,8 @@ export class Calendar {
     throw response.error;
   }
 
-  async deleteEvent(eventId: string) {
-    if (!this.token) {
+  async deleteEvent(eventId?: string) {
+    if (!this.token || !eventId) {
       return { id: "" } as EventResource;
     }
     const res = await fetch(`${this.url}/${eventId}`, {

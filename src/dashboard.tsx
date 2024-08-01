@@ -169,7 +169,7 @@ export function Dashboard({ session }: Props) {
   };
 
   return (
-    <div className="flex flex-col px-4 pb-6 bg-gray-800 h-full sm:h-screen w-screen">
+    <div className="flex flex-col px-4 pb-6 bg-gray-800 h-screen sm:h-screen w-screen">
       <Toaster />
       <div className="flex flex-col items-center sm:!flex-row sm:justify-between p-4 text-white">
         <h1 className="text-2xl text-center">
