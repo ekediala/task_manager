@@ -141,6 +141,10 @@ export function Dashboard({ session }: Props) {
         () => getTasks(startOfDay, endOfDay, user.id),
       )
       .subscribe();
+
+    return () => {
+      supabase.channel("postgres_changes").unsubscribe();
+    };
   }, [getTasks, startOfDay, endOfDay, user]);
 
   const deleteTask = async (task: Task) => {
